@@ -25,7 +25,10 @@ class _LoginPageState extends State<LoginPage> {
         'email': FormControl<String>(
           validators: [Validators.required, Validators.email],
         ),
-        'password': FormControl<String>(validators: [Validators.required, Validators.minLength(8),]),
+        // obligado, minimo 8 caracteres, al menos un digito letra y carac. especial
+        'password': FormControl<String>(
+          validators: [Validators.required, Validators.minLength(8), Validators.pattern(r'^(?=.*\d)(?=.*[a-zA-Z])(?=.*\W).+$')]
+        ),
       });
 
   // controlar el mostrar la contraseña
@@ -186,7 +189,8 @@ class _LoginPageState extends State<LoginPage> {
   /// Construye el formulario del login
   /// 
   Widget _buildForm(){
-    return ReactiveFormBuilder(form: buildForm, 
+    return ReactiveFormBuilder(
+      form: buildForm, 
       builder: (context, formGroup, child) {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -219,10 +223,12 @@ class _LoginPageState extends State<LoginPage> {
               validationMessages: {
                 ValidationMessage.required: (_)=> 'The email must not be empty',
                 ValidationMessage.minLength: (_)=> 'The password must be at least 8 characters',
+                ValidationMessage.pattern:(_)=> 'The password must contain at least one digit, one character and one special character'
               },
               textInputAction: TextInputAction.go,
               decoration:  InputDecoration(
                 labelText: 'Password',
+                errorMaxLines: 2,
                 labelStyle: Styles.textHint,
                 prefixIcon: const Icon(Icons.lock),
                 fillColor:  const Color(0xffF8F8F8),
