@@ -1,4 +1,6 @@
 
+import 'package:maquetacion_academy_login/data/model/auth_token.dart';
+
 ///
 /// Clase que representa un usuario logeado de la aplicacion
 ///
@@ -8,31 +10,39 @@
 ///
 class User{
   
-  String name;
-  String password;
+  int id;
+  String username;
   String email;
+  String firstName;
+  String lastName;
+  String gender;
+  String image;
+  AuthToken token;
   
-  User(this.email,this.password,this.name);
+  User(this.id,this.username,this.email,this.firstName,this.lastName,this.gender,this.image,this.token);
 
-  factory User.fromJsonForm(Map<String, Object?> formValues) {
+  factory User.fromApi(Map<String, Object?> formValues) {
     return User(
+      formValues['id'] as int, 
+      formValues['username'] as String , 
       formValues['email'] as String , 
-      formValues['password'] as String , 
-      formValues['name'] as String
+      formValues['firstName'] as String,
+      formValues['lastName'] as String,
+      formValues['gender'] as String,
+      formValues['image'] as String,
+      AuthToken.fromRawToken(formValues['token'] as String)
     );
   }
 
-  factory User.dummy() {
-    return User(
-      "correo@dummy.es", "1234","User1"
-    );
+  factory User.dummy(){
+    return User(1, "username", "email", "firstName", "lastName", "gender", "", AuthToken.dummy());
   }
 
 
   @override
   String toString() {
-    // TODO: implement toString
-    return "User [ Email: $email, Password: $password, Name: $name ] ";
+    return 'User [ Userame: $username, Email: $email, firstName: $firstName, '
+    'lastName: $lastName, gender: $gender, image: $image, token $token ] ';
   }
   
 }

@@ -15,8 +15,10 @@ class RegisterBloc extends Bloc<RegisterEvent,RegisterState>{
         emit(Loading());
         // TODO caso de uso login
         await Future.delayed(Duration(seconds: 2));
-        print(event.user);
-        emit(Registered(event.user));
+
+        emit(NoContent());
+        //print(event.user);
+        //emit(Registered(event.user));
       },
     );
 

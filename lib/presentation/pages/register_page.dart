@@ -322,7 +322,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   // ---------------------------------------------------> Register
                   _removeFocus(context);
                   if(formGroup.valid){
-                    context.read<RegisterBloc>().add(Register(User.fromJsonForm(formGroup.value)));
+                    context.read<RegisterBloc>().add(Register(formGroup.value));
                   }else {
                     formGroup.markAllAsTouched();
                   }

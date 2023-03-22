@@ -24,11 +24,11 @@ class _LoginPageState extends State<LoginPage> {
   // formulario de login
   FormGroup buildForm() => fb.group(<String, Object>{
         'email': FormControl<String>(
-          validators: [Validators.required, Validators.email],
+          //validators: [Validators.required, Validators.email],
         ),
         // obligado, minimo 8 caracteres, al menos un digito letra y carac. especial
         'password': FormControl<String>(
-          validators: [Validators.required, Validators.minLength(8), Validators.pattern(r'^(?=.*\d)(?=.*[a-zA-Z])(?=.*\W).+$')]
+          //validators: [Validators.required, Validators.minLength(8), Validators.pattern(r'^(?=.*\d)(?=.*[a-zA-Z])(?=.*\W).+$')]
         ),
       });
 
@@ -52,7 +52,11 @@ class _LoginPageState extends State<LoginPage> {
           );
         }, 
         listener: (context, state) {
-          
+          if(state is Error){
+            // TODO mostrar un snack bar o similar para el error
+          }else if(state is Loged){
+            print("USUARIO LOGEADO: ${state.user}");
+          }
         },
       ) 
     );
@@ -268,11 +272,12 @@ class _LoginPageState extends State<LoginPage> {
                 onPressed: (){
                   // ---------------------------------------------------> Login
                   _removeFocus(context);
-                  if(formGroup.valid){
+                  context.read<LoginBloc>().add(LogIn(formGroup.value));
+                  /*if(formGroup.valid){
                     context.read<LoginBloc>().add(LogIn(formGroup.value));
                   }else {
                     formGroup.markAllAsTouched();
-                  }
+                  }*/
                                       
                 },
               child: const Text("Log in")
