@@ -12,23 +12,30 @@ class LoginBloc extends Bloc<LogInEvent,LogInState>{
     
     final LoginUseCase loginUseCase = LoginUseCase();
     
+
+    ///
+    /// evento login
+    /// 
+    /// llama al caso de uso, si todo va bien devuelve el usuario, sino un error
+    /// 
+    /// @event.credentials json con username y password
+    /// 
+    ///
     on<LogIn>( //----------------------------------
       (event, emit) async{
         emit(Loading());
-        print("LOGIN------ ${event.credentials}");
         
         try{
 
-          String email = event.credentials['email'] as String;
+          String email = event.credentials['username'] as String;
           String password = event.credentials['password'] as String;
 
           User user = await loginUseCase.call(email, password);
-          print("USER------");
           emit(Loged(user)); // ------------------------------------- return user
 
         }catch(e){
           print("ERROR: $e");
-          emit(Error("Error inseperado al iniciar sesion")); 
+          emit(Error("Error inseperado al iniciar sesion")); // ----- return error
         }
         
         

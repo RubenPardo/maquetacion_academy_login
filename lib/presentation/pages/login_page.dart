@@ -23,12 +23,12 @@ class _LoginPageState extends State<LoginPage> {
 
   // formulario de login
   FormGroup buildForm() => fb.group(<String, Object>{
-        'email': FormControl<String>(
-          //validators: [Validators.required, Validators.email],
+        'username': FormControl<String>(
+          validators: [Validators.required],
         ),
         // obligado, minimo 8 caracteres, al menos un digito letra y carac. especial
         'password': FormControl<String>(
-          //validators: [Validators.required, Validators.minLength(8), Validators.pattern(r'^(?=.*\d)(?=.*[a-zA-Z])(?=.*\W).+$')]
+          validators: [Validators.required, Validators.minLength(6), Validators.pattern(r'^(?=.*\d)(?=.*[a-zA-Z]).+$')]
         ),
       });
 
@@ -53,9 +53,11 @@ class _LoginPageState extends State<LoginPage> {
         }, 
         listener: (context, state) {
           if(state is Error){
-            // TODO mostrar un snack bar o similar para el error
+            showSnackBar(context, state.message,true);
           }else if(state is Loged){
-            print("USUARIO LOGEADO: ${state.user}");
+            print(state.user);
+            showSnackBar(context, "Usuario logead correctamente", false);
+            
           }
         },
       ) 
@@ -203,15 +205,14 @@ class _LoginPageState extends State<LoginPage> {
           children: [
             // ----------------------------------- email
             ReactiveTextField<String>(
-              formControlName: 'email',
+              formControlName: 'username',
               validationMessages: {
-                ValidationMessage.required: (_)=> 'The email must not be empty',
-                ValidationMessage.email: (_)=> 'The email value must be a valid email',
+                ValidationMessage.required: (_)=> 'The usernmae must not be empty',
               },
               textInputAction: TextInputAction.next,
               decoration: const InputDecoration(
-                labelText: 'Email Address',
-                prefixIcon:  Icon(Icons.mail_outline),
+                labelText: 'Username',
+                prefixIcon:  Icon(Icons.person_outline),
                 labelStyle: Styles.textHint,
                 prefixIconColor: AppColors.textColor,
                 fillColor:  Color(0xffF8F8F8),
@@ -228,8 +229,8 @@ class _LoginPageState extends State<LoginPage> {
               obscureText: !_passwordVisible,
               validationMessages: {
                 ValidationMessage.required: (_)=> 'The email must not be empty',
-                ValidationMessage.minLength: (_)=> 'The password must be at least 8 characters',
-                ValidationMessage.pattern:(_)=> 'The password must contain at least one digit, one character and one special character'
+                ValidationMessage.minLength: (_)=> 'The password must be at least 6 characters',
+                ValidationMessage.pattern:(_)=> 'The password must contain at least one digit and one character'
               },
               textInputAction: TextInputAction.go,
               decoration:  InputDecoration(
@@ -272,12 +273,11 @@ class _LoginPageState extends State<LoginPage> {
                 onPressed: (){
                   // ---------------------------------------------------> Login
                   _removeFocus(context);
-                  context.read<LoginBloc>().add(LogIn(formGroup.value));
-                  /*if(formGroup.valid){
+                  if(formGroup.valid){
                     context.read<LoginBloc>().add(LogIn(formGroup.value));
                   }else {
                     formGroup.markAllAsTouched();
-                  }*/
+                  }
                                       
                 },
               child: const Text("Log in")
@@ -348,5 +348,16 @@ class _LoginPageState extends State<LoginPage> {
     if (!currentFocus.hasPrimaryFocus) {
       currentFocus.unfocus();
     }
+  }
+
+  void showSnackBar(var context, String message, bool isError){
+    ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    backgroundColor: isError ? Colors.redAccent : Colors.greenAccent,
+                    content: Text(
+                      message,
+                    ),
+                  ),
+                );
   }
 }

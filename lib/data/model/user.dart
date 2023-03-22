@@ -38,6 +38,14 @@ class User{
     return User(1, "username", "email", "firstName", "lastName", "gender", "", AuthToken.dummy());
   }
 
+  Map<String,dynamic> toJson(){
+    return {
+      'username': username,
+      'email':email,
+      'firstName':firstName,
+      'lastName':lastName,
+    };
+  }
 
   @override
   String toString() {

@@ -5,8 +5,8 @@ import 'package:maquetacion_academy_login/data/service/storage_service.dart';
 
 class LoginUseCase{
 
-  AuthService authService = AuthServiceImpl();
-  StorageService storageService = StorageService();
+  final AuthService _authService = AuthServiceImpl();
+  final StorageService _storageService = StorageService();
 
   ///
   /// Caso de uso login
@@ -16,10 +16,10 @@ class LoginUseCase{
   /// @email 
   /// @password 
   ///
-  Future<User> call(String email, String password) async{
+  Future<User> call(String username, String password) async{
     User user;
-    user = await authService.login(email, password);
-    storageService.writeSecureData(StorageKeys.authToken,user.token.rawToken);
+    user = await _authService.login(username, password);
+    _storageService.writeSecureData(StorageKeys.authToken,user.token.rawToken);
 
 
     

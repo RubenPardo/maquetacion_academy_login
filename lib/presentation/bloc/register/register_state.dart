@@ -9,6 +9,5 @@ class Error extends RegisterState{
 }
 class NoContent extends RegisterState{}
 class Registered extends RegisterState{
-  User user;
-  Registered(this.user);
+
 }

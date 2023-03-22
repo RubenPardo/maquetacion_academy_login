@@ -22,15 +22,15 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
   // formulario de login
   FormGroup buildForm() => fb.group(<String, Object>{
-        'name': FormControl<String>(
+        'username': FormControl<String>(
           validators: [Validators.required],
         ),
         'email': FormControl<String>(
           validators: [Validators.required, Validators.email],
         ),
-        // obligado, minimo 8 caracteres, al menos un digito letra y carac. especial
+        // obligado, minimo 6 caracteres, al menos un digito letra y carac. especial
         'password': FormControl<String>(
-          validators: [Validators.required, Validators.minLength(8), Validators.pattern(r'^(?=.*\d)(?=.*[a-zA-Z])(?=.*\W).+$')]
+          validators: [Validators.required, Validators.minLength(6), Validators.pattern(r'^(?=.*\d)(?=.*[a-zA-Z]).+$')]
         ),
         'confirm_password': ''
       },[Validators.mustMatch('password', 'confirm_password',markAsDirty: false)]);
@@ -56,7 +56,16 @@ class _RegisterPageState extends State<RegisterPage> {
           );
         }, 
         listener: (context, state) {
-          
+          if(state is Error){
+            showSnackBar(context, state.message,true);
+          }else if(state is Registered){
+            showSnackBar(context, "Usuario registrado correctamente", false);
+            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(builder: (context) => const LoginPage()),
+                            );
+            
+          }
         },
       ) 
     );
@@ -203,13 +212,13 @@ class _RegisterPageState extends State<RegisterPage> {
           children: [
             // ----------------------------------- name
             ReactiveTextField<String>(
-              formControlName: 'name',
+              formControlName: 'username',
               validationMessages: {
                 ValidationMessage.required: (_)=> 'The name must not be empty',
               },
               textInputAction: TextInputAction.next,
               decoration: const InputDecoration(
-                labelText: 'Name',
+                labelText: 'Username',
                 prefixIcon:  Icon(Icons.person_outlined),
                 labelStyle: Styles.textHint,
                 prefixIconColor: AppColors.textColor,
@@ -248,8 +257,8 @@ class _RegisterPageState extends State<RegisterPage> {
               obscureText: !_passwordVisible,
               validationMessages: {
                 ValidationMessage.required: (_)=> 'The email must not be empty',
-                ValidationMessage.minLength: (_)=> 'The password must be at least 8 characters',
-                ValidationMessage.pattern:(_)=> 'The password must contain at least one digit, one character and one special character'
+                ValidationMessage.minLength: (_)=> 'The password must be at least 6 characters',
+                ValidationMessage.pattern:(_)=> 'The password must contain at least one digit and one character'
               },
               textInputAction: TextInputAction.go,
               decoration:  InputDecoration(
@@ -394,5 +403,16 @@ class _RegisterPageState extends State<RegisterPage> {
     if (!currentFocus.hasPrimaryFocus) {
       currentFocus.unfocus();
     }
+  }
+
+  void showSnackBar(var context, String message, bool isError){
+    ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    backgroundColor: isError ? Colors.redAccent : Colors.greenAccent,
+                    content: Text(
+                      message,
+                    ),
+                  ),
+                );
   }
 }
