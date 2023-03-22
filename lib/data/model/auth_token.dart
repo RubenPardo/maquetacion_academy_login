@@ -1,5 +1,6 @@
+import 'package:equatable/equatable.dart';
 import 'package:jwt_decode/jwt_decode.dart';
-class AuthToken{
+class AuthToken extends Equatable{
 
   final String rawToken;
   final String refreshToken;
@@ -30,5 +31,12 @@ class AuthToken{
     // TODO: implement toString
     return "AuthToken [rawToken: $rawToken, expiryDate: ${expiryDate.millisecondsSinceEpoch}, refresh_token: $refreshToken]";
   }
+  
+  @override
+  bool? get stringify => true;
+  
+  @override
+  List<Object?> get props => [rawToken,expiryDate,refreshToken];
+  
 
 }

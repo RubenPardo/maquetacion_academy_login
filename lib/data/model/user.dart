@@ -1,4 +1,5 @@
 
+import 'package:equatable/equatable.dart';
 import 'package:maquetacion_academy_login/data/model/auth_token.dart';
 
 ///
@@ -8,7 +9,7 @@ import 'package:maquetacion_academy_login/data/model/auth_token.dart';
 /// @password contraseña de la cuenta
 /// @email correo usado para crear la cuenta
 ///
-class User{
+class User extends Equatable{
   
   int id;
   String username;
@@ -48,9 +49,9 @@ class User{
   }
 
   @override
-  String toString() {
-    return 'User [ Userame: $username, Email: $email, firstName: $firstName, '
-    'lastName: $lastName, gender: $gender, image: $image, token $token ] ';
-  }
+  bool? get stringify => true;
+  
+  @override
+  List<Object?> get props => [id,username,email,firstName,lastName,gender,image,token];
   
 }
