@@ -1,14 +1,26 @@
+import 'package:equatable/equatable.dart';
 import 'package:maquetacion_academy_login/data/model/user.dart';
 
-abstract class LogInState{}
+abstract class LogInState extends Equatable{}
 
-class Loading extends LogInState{}
-class Error extends LogInState{
-  String message;
-  Error(this.message);
+class Loading extends LogInState{
+  @override
+  List<Object?> get props => [];
 }
-class NoContent extends LogInState{}
+class Error extends LogInState{
+  final String message;
+  Error(this.message);
+  @override
+  List<Object?> get props => [message];
+}
+class NoContent extends LogInState{
+  @override
+  List<Object?> get props => [];
+}
 class Loged extends LogInState{
-  User user;
+  final User user;
   Loged(this.user);
+  
+  @override
+  List<Object?> get props => [user];
 }
