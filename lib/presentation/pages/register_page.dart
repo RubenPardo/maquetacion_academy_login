@@ -2,27 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:maquetacion_academy_login/presentation/bloc/login/login_bloc.dart';
-import 'package:maquetacion_academy_login/presentation/bloc/login/login_event.dart';
-import 'package:maquetacion_academy_login/presentation/bloc/login/login_state.dart';
-import 'package:maquetacion_academy_login/presentation/pages/register_page.dart';
+import 'package:maquetacion_academy_login/presentation/bloc/register/register_bloc.dart';
+import 'package:maquetacion_academy_login/presentation/bloc/register/register_event.dart';
+import 'package:maquetacion_academy_login/presentation/bloc/register/register_state.dart';
+import 'package:maquetacion_academy_login/presentation/colors.dart';
+import 'package:maquetacion_academy_login/presentation/pages/login_page.dart';
 import 'package:maquetacion_academy_login/presentation/styles.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
-import '../colors.dart';
+import '../../data/model/user.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class RegisterPage extends StatefulWidget {
+  const RegisterPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
-
-
+class _RegisterPageState extends State<RegisterPage> {
   // formulario de login
   FormGroup buildForm() => fb.group(<String, Object>{
+        'name': FormControl<String>(
+          validators: [Validators.required],
+        ),
         'email': FormControl<String>(
           validators: [Validators.required, Validators.email],
         ),
@@ -30,10 +32,12 @@ class _LoginPageState extends State<LoginPage> {
         'password': FormControl<String>(
           validators: [Validators.required, Validators.minLength(8), Validators.pattern(r'^(?=.*\d)(?=.*[a-zA-Z])(?=.*\W).+$')]
         ),
-      });
+        'confirm_password': ''
+      },[Validators.mustMatch('password', 'confirm_password',markAsDirty: false)]);
 
   // controlar el mostrar la contraseña
   bool _passwordVisible = false;
+  bool _passwordVisibleConfirm = false;
 
 
 
@@ -42,7 +46,7 @@ class _LoginPageState extends State<LoginPage> {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: BlocConsumer<LoginBloc,LogInState>(
+      body: BlocConsumer<RegisterBloc,RegisterState>(
         builder: (context, state) {
           return Stack(
             children: [
@@ -59,7 +63,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   ///
-  /// Funcion que devuelve el body del login 
+  /// Funcion que devuelve el body del registro 
   /// 
   /// @size Objeto size para controlar el responsive
   ///
@@ -137,8 +141,8 @@ class _LoginPageState extends State<LoginPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: const [
-        Text("Welcome back!",style: Styles.titleHiglighted,),
-        Text("Enter your credentials to continue.",style: Styles.subTitle,),
+        Text("Create account!",style: Styles.titleHiglighted,),
+        Text("Register to get started.",style: Styles.subTitle,),
       ],
     );
   }
@@ -165,7 +169,7 @@ class _LoginPageState extends State<LoginPage> {
                 borderRadius: BorderRadius.circular(10)
               ),
               padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 20),
-              child:  IconButton(iconSize: 35,onPressed: null, icon: Image.asset("assets/images/google_logo.png")),
+              child:  IconButton(iconSize: 25,onPressed: null, icon: Image.asset("assets/images/google_logo.png")),
             ),
             const SizedBox(width: 30,),
             // facebook
@@ -177,7 +181,7 @@ class _LoginPageState extends State<LoginPage> {
                 borderRadius: BorderRadius.circular(10)
               ),
               padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 20),
-              child:  IconButton(iconSize: 35,onPressed: null, icon: Image.asset("assets/images/facebook_logo.png")),
+              child:  IconButton(iconSize: 25,onPressed: null, icon: Image.asset("assets/images/facebook_logo.png")),
             ),
             
           
@@ -197,6 +201,26 @@ class _LoginPageState extends State<LoginPage> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // ----------------------------------- name
+            ReactiveTextField<String>(
+              formControlName: 'name',
+              validationMessages: {
+                ValidationMessage.required: (_)=> 'The name must not be empty',
+              },
+              textInputAction: TextInputAction.next,
+              decoration: const InputDecoration(
+                labelText: 'Name',
+                prefixIcon:  Icon(Icons.person_outlined),
+                labelStyle: Styles.textHint,
+                prefixIconColor: AppColors.textColor,
+                fillColor:  Color(0xffF8F8F8),
+                filled: true,
+                border:  OutlineInputBorder(borderSide: BorderSide(color: Color(0xFFDDDDDD))),
+                
+              ),
+              
+            ),
+            const SizedBox(height: 10,),
             // ----------------------------------- email
             ReactiveTextField<String>(
               formControlName: 'email',
@@ -207,7 +231,7 @@ class _LoginPageState extends State<LoginPage> {
               textInputAction: TextInputAction.next,
               decoration: const InputDecoration(
                 labelText: 'Email Address',
-                prefixIcon:  Icon(Icons.mail_outline),
+                prefixIcon:  Icon(Icons.mail_outline_rounded),
                 labelStyle: Styles.textHint,
                 prefixIconColor: AppColors.textColor,
                 fillColor:  Color(0xffF8F8F8),
@@ -232,7 +256,7 @@ class _LoginPageState extends State<LoginPage> {
                 labelText: 'Password',
                 errorMaxLines: 2,
                 labelStyle: Styles.textHint,
-                prefixIcon: const Icon(Icons.lock_outline),
+                prefixIcon: const Icon(Icons.lock_outline_rounded),
                 fillColor:  const Color(0xffF8F8F8),
                 filled: true,
                 border:  const OutlineInputBorder(borderSide: BorderSide(color: Color(0xFFDDDDDD))),
@@ -246,11 +270,40 @@ class _LoginPageState extends State<LoginPage> {
                 )
               ),
             ),
+
+
+            const SizedBox(height: 10,),
+            // ----------------------------------- confirm password
+            ReactiveTextField<String>(
+              formControlName: 'confirm_password',
+              obscureText: !_passwordVisibleConfirm,
+              showErrors: (control) => control.invalid && control.dirty, // con esto hacemos que solo valide cuando el usuario interaccione con el
+              validationMessages: {
+                ValidationMessage.mustMatch: (_) =>
+                      'Password confirmation must match',
+              },
+              textInputAction: TextInputAction.go,
+              decoration:  InputDecoration(
+                labelText: 'Confirm Password',
+                errorMaxLines: 2,
+                labelStyle: Styles.textHint,
+                prefixIcon: const Icon(Icons.lock_outline_rounded),
+                fillColor:  const Color(0xffF8F8F8),
+                filled: true,
+                border:  const OutlineInputBorder(borderSide: BorderSide(color: Color(0xFFDDDDDD))),
+                prefixIconColor: AppColors.textColor,
+                suffixIconColor: AppColors.primaryColor,
+                suffixIcon: IconButton(
+                  icon: Icon(_passwordVisibleConfirm ? Icons.visibility_outlined : Icons.visibility_off_outlined),
+                  onPressed: () {
+                    setState(() { _passwordVisibleConfirm = !_passwordVisibleConfirm;});
+                  },
+                )
+                ),
+              ),
             
             const SizedBox(height: 18.5,),
-            const Text("Forgot password?",style: Styles.textHiglighted,),
-            const SizedBox(height: 18.5,),
-            // boton login
+            // boton crear cuenta
             Container(
               decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
               width: double.infinity,
@@ -266,16 +319,16 @@ class _LoginPageState extends State<LoginPage> {
                   elevation: MaterialStateProperty.all(0),
                 ),
                 onPressed: (){
-                  // ---------------------------------------------------> Login
+                  // ---------------------------------------------------> Register
                   _removeFocus(context);
                   if(formGroup.valid){
-                    context.read<LoginBloc>().add(LogIn(formGroup.value));
+                    context.read<RegisterBloc>().add(Register(User.fromJsonForm(formGroup.value)));
                   }else {
                     formGroup.markAllAsTouched();
                   }
                                       
                 },
-              child: const Text("Log in")
+              child: const Text("Register")
               ),
             ),
           ],
@@ -285,7 +338,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   /// 
-  /// Funcion que construye la parte inferior de la pagina, redirige al registro
+  /// Funcion que construye la parte inferior de la pagina, redirige al login
   /// 
   /// @size usado para que el overflowbox ocupe el ancho de la pantalla y asi obviar los paddings padre
   /// 
@@ -302,7 +355,7 @@ class _LoginPageState extends State<LoginPage> {
                 child: Text.rich(
               
                   TextSpan(
-                    text: "Don't have an account? ",
+                    text: "Already have an account? ",
                     style: Styles.text,
                     children: [
                       WidgetSpan(
@@ -310,14 +363,14 @@ class _LoginPageState extends State<LoginPage> {
                         baseline: TextBaseline.alphabetic,
                         child: TextButton(
                           onPressed: (){
-                            // -----------------------------------------------> Go to Registrar
+                            // -----------------------------------------------> Go to Login
+                            
                             Navigator.pushReplacement(
                               context,
-                              MaterialPageRoute(builder: (context) => const RegisterPage()),
+                              MaterialPageRoute(builder: (context) => const LoginPage()),
                             );
-            
                           }, 
-                          child: Text("Register",style: Styles.textHiglighted.copyWith(decoration: TextDecoration.underline,),),
+                          child: Text("Log In",style: Styles.textHiglighted.copyWith(decoration: TextDecoration.underline,),),
                         )
                       ),
                   ]
@@ -330,8 +383,6 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
-
-
   ///
   /// Funcion para quitar cualquier foco, para esconder el teclado
   /// 

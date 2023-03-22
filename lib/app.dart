@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:maquetacion_academy_login/presentation/bloc/login/login_bloc.dart';
+import 'package:maquetacion_academy_login/presentation/bloc/register/register_bloc.dart';
 import 'package:maquetacion_academy_login/presentation/pages/login_page.dart';
 
 class App extends StatelessWidget {
@@ -12,6 +13,7 @@ class App extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => LoginBloc()), 
+        BlocProvider(create: (context) => RegisterBloc()), 
       ],
       child: const MaterialApp(
         title: 'Login App',

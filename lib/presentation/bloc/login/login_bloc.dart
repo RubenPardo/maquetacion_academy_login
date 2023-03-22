@@ -15,9 +15,9 @@ class LoginBloc extends Bloc<LogInEvent,LogInState>{
         emit(Loading());
         // TODO caso de uso login
         await Future.delayed(Duration(seconds: 2));
-        User user = User();
-        print(user);
-        emit(Loged(user));
+        
+        print(event.credentials);
+        emit(Loged(User.dummy()));
       },
     );
 
